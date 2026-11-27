@@ -7,176 +7,206 @@
 <meta name="description" content="تابع سعر الذهب لحظة بلحظة، سجّل مدخراتك من الذهب، واعرف الزكاة الواجبة عليها.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0f0d0a; --card:#1a1712; --card2:#221d15; --line:#342c1e;
-    --gold:#e8c35a; --gold2:#c9a23b; --gold-dim:#8a743a;
-    --text:#f5efe2; --muted:#b0a48c; --green:#4ade80; --red:#f87171;
+    --bg:#f4f1ea; --card:#ffffff; --card2:#faf8f3; --line:#e8e2d3;
+    --gold:#a3821f; --gold-strong:#8f6b14; --gold-soft:#f5ead0;
+    --btn-from:#dcb84e; --btn-to:#c39a2e;
+    --ink:#221f18; --ink2:#7a7261; --green:#1a9e5c; --red:#d43a3a;
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent}
-  body{background:var(--bg); color:var(--text); font-family:'Cairo',sans-serif; min-height:100vh; padding-bottom:48px}
-  .wrap{max-width:560px; margin:0 auto; padding:16px}
-  header.top{display:flex; align-items:center; gap:12px; padding:18px 4px 6px}
-  .coin{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f7dc8a,#c9a23b 60%,#8a6d1f);
-    display:flex;align-items:center;justify-content:center;font-weight:800;color:#3a2d08;font-size:20px;box-shadow:0 2px 10px rgba(201,162,59,.35); flex:none}
-  header.top h1{font-size:24px;font-weight:800}
-  header.top p{color:var(--muted);font-size:13px}
-  .card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; margin-top:16px}
-  .card h2{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:4px}
-  .hint{color:var(--muted);font-size:12.5px;line-height:1.7}
+  html.ar body{font-family:'Cairo','Manrope',sans-serif}
+  html.en body{font-family:'Manrope','Cairo',sans-serif}
+  body{background:var(--bg); color:var(--ink); min-height:100vh; padding-bottom:40px}
+  .wrap{max-width:520px; margin:0 auto; padding:14px}
+
+  /* top bar */
+  header.top{display:flex; align-items:center; gap:12px; padding:14px 4px 10px}
+  .coin{width:44px;height:44px;border-radius:14px;flex:none;
+    background:linear-gradient(135deg,#e6c45c,#b78d24);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:800;font-size:15px;letter-spacing:.5px;
+    box-shadow:0 4px 12px rgba(183,141,36,.35)}
+  header.top .names{flex:1}
+  header.top h1{font-size:21px;font-weight:800;line-height:1.2}
+  header.top p{color:var(--ink2);font-size:12px;margin-top:1px}
+  .lang-toggle{display:flex;background:#e9e3d3;border-radius:20px;padding:3px;flex:none}
+  .lang-toggle button{border:none;background:transparent;color:var(--ink2);font-weight:700;font-size:12.5px;
+    padding:6px 13px;border-radius:16px;cursor:pointer;font-family:inherit}
+  .lang-toggle button.on{background:var(--ink);color:#fff}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px; margin-top:14px;
+    box-shadow:0 1px 3px rgba(34,31,24,.05)}
+  .card h2{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .hint{color:var(--ink2);font-size:12.5px;line-height:1.75}
+
   /* price hero */
-  .hero-price{display:flex;align-items:baseline;gap:8px;margin:8px 0 2px}
-  .hero-price .num{font-size:44px;font-weight:800;color:var(--gold);letter-spacing:-.5px}
-  .hero-price .unit{color:var(--muted);font-size:14px}
-  .chg{font-size:13px;font-weight:700;padding:2px 10px;border-radius:20px}
-  .chg.up{color:var(--green);background:rgba(74,222,128,.1)}
-  .chg.down{color:var(--red);background:rgba(248,113,113,.1)}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-  .cell{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px 8px;text-align:center}
-  .cell .k{color:var(--muted);font-size:12px;font-weight:600}
-  .cell .v{font-size:17px;font-weight:800;color:var(--text);margin-top:2px}
-  .cell .v small{font-size:11px;color:var(--muted);font-weight:400}
-  .priceline{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--muted);font-size:12px;gap:8px}
-  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;font-weight:700}
-  .btn-gold{background:linear-gradient(135deg,#e8c35a,#c9a23b);color:#241b05;padding:10px 18px;font-size:14px}
-  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--muted);padding:8px 14px;font-size:13px}
+  .hero-head{display:flex;justify-content:space-between;align-items:center}
+  .hero-price{display:flex;align-items:baseline;gap:8px;margin:10px 0 0;flex-wrap:wrap}
+  .hero-price .num{font-size:42px;font-weight:800;letter-spacing:-1px;color:var(--ink)}
+  .hero-price .unit{color:var(--ink2);font-size:13px}
+  .chg{font-size:12.5px;font-weight:800;padding:3px 10px;border-radius:20px}
+  .chg.up{color:var(--green);background:rgba(26,158,92,.1)}
+  .chg.down{color:var(--red);background:rgba(212,58,58,.1)}
+  .spark-wrap{margin-top:10px;display:none}
+  .spark-cap{color:var(--ink2);font-size:11px;margin-bottom:2px}
+  #spark{width:100%;height:52px;display:block}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+  .cell{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center}
+  .cell .k{color:var(--ink2);font-size:11.5px;font-weight:700}
+  .cell .v{font-size:16px;font-weight:800;color:var(--ink);margin-top:2px}
+  .cell .v small{font-size:10.5px;color:var(--ink2);font-weight:600}
+  .priceline{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--ink2);font-size:11.5px;gap:8px}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;font-weight:800}
+  .btn-gold{background:linear-gradient(135deg,var(--btn-from),var(--btn-to));color:#241b05;padding:10px 18px;font-size:13.5px;
+    box-shadow:0 2px 8px rgba(195,154,46,.35)}
+  .btn-ghost{flex:none;white-space:nowrap;background:var(--card);border:1px solid var(--line);color:var(--ink2);padding:8px 14px;font-size:12.5px}
   .btn-gold:active,.btn-ghost:active{transform:scale(.97)}
-  .errbox{display:none;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:14px;padding:14px;margin-top:14px;font-size:13.5px;line-height:1.9}
-  .errbox .why{color:var(--muted);font-size:11.5px}
+  .errbox{display:none;background:#fdf1f1;border:1px solid #f0c9c9;border-radius:14px;padding:14px;margin-top:14px;font-size:13px;line-height:1.85;color:#7c2d2d}
+  .errbox .why{color:#a86a6a;font-size:11px}
   .errbox button{margin-top:8px}
-  .manual-link{display:inline-block;margin-top:10px;color:var(--gold-dim);font-size:12.5px;text-decoration:underline;cursor:pointer;background:none;border:none;font-weight:600}
+  .manual-link{display:inline-block;margin-top:12px;color:var(--gold);font-size:12.5px;text-decoration:underline;cursor:pointer;background:none;border:none;font-weight:700}
   .manual-row{gap:8px;margin-top:10px}
   .form-row.manual-row{display:none}
   .manual-row input{flex:1;min-width:0}
+
   /* forms */
   .form-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-  select,input{background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:11px 12px;font-family:inherit;font-size:15px;outline:none}
-  select:focus,input:focus{border-color:var(--gold-dim)}
+  select,input{background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:11px 12px;font-family:inherit;font-size:14.5px;outline:none}
+  select:focus,input:focus{border-color:var(--gold)}
   .form-row select{flex:1.1;min-width:110px}
   .form-row input{flex:1;min-width:90px}
+
   /* holdings */
   .holding{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
   .holding .info{flex:1}
-  .holding .t{font-weight:700;font-size:14.5px}
-  .holding .s{color:var(--muted);font-size:12px;margin-top:1px}
-  .holding .val{text-align:left}
-  .holding .val .n{font-weight:800;font-size:15px}
-  .holding .val .pl{font-size:12px;font-weight:700}
+  .holding .t{font-weight:800;font-size:14px}
+  .holding .s{color:var(--ink2);font-size:11.5px;margin-top:1px}
+  .holding .val{text-align:end}
+  .holding .val .n{font-weight:800;font-size:14.5px}
+  .holding .val .pl{font-size:11.5px;font-weight:800}
   .pl.up{color:var(--green)} .pl.down{color:var(--red)}
-  .del{background:none;color:var(--muted);font-size:18px;padding:6px 8px}
-  .totals{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
-  .total{background:var(--card2);border:1px solid var(--gold-dim);border-radius:14px;padding:12px 8px;text-align:center}
-  .total .k{color:var(--muted);font-size:11.5px;font-weight:600}
-  .total .v{font-size:17px;font-weight:800;color:var(--gold);margin-top:3px}
-  .empty{color:var(--muted);font-size:13.5px;text-align:center;padding:18px 8px 6px;line-height:1.8}
+  .del{background:none;color:#b9b09a;font-size:17px;padding:6px 8px}
+  .totals{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:14px}
+  .total{background:var(--gold-soft);border:1px solid #e5d5a8;border-radius:14px;padding:11px 6px;text-align:center}
+  .total .k{color:var(--ink2);font-size:10.5px;font-weight:700}
+  .total .v{font-size:15.5px;font-weight:800;color:var(--gold-strong);margin-top:3px}
+  .empty{color:var(--ink2);font-size:13px;text-align:center;padding:18px 8px 6px;line-height:1.85}
+
   /* zakat */
-  .zakat-box{border-radius:14px;padding:14px;margin-top:12px;font-size:14px;line-height:1.9}
-  .zakat-box.ok{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.25)}
+  .zakat-box{border-radius:14px;padding:14px;margin-top:12px;font-size:13.5px;line-height:1.9}
+  .zakat-box.ok{background:#eef7f1;border:1px solid #c4e2d0}
   .zakat-box.no{background:var(--card2);border:1px solid var(--line)}
-  .zakat-big{font-size:30px;font-weight:800;color:var(--gold)}
-  .prog{height:8px;background:var(--card2);border-radius:6px;overflow:hidden;margin-top:10px;border:1px solid var(--line)}
-  .prog i{display:block;height:100%;background:linear-gradient(90deg,#c9a23b,#e8c35a);border-radius:6px;transition:width .4s}
-  footer{color:var(--muted);font-size:11.5px;line-height:1.9;margin-top:22px;padding:0 6px}
-  .badge-live{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:700}
-  .badge-live::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
-  .badge-stale{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#fbbf24;font-weight:700}
-  .badge-stale::before{content:'';width:7px;height:7px;border-radius:50%;background:#fbbf24}
-  .badge-err{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--red);font-weight:700}
-  .badge-err::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red)}
+  .zakat-big{font-size:28px;font-weight:800;color:var(--gold-strong)}
+  .prog{height:8px;background:#efe9da;border-radius:6px;overflow:hidden;margin-top:10px}
+  .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--btn-to),var(--btn-from));border-radius:6px;transition:width .4s}
+
+  footer{color:var(--ink2);font-size:11px;line-height:1.9;margin-top:20px;padding:0 6px}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800}
+  .badge::before{content:'';width:7px;height:7px;border-radius:50%}
+  .badge.live{color:var(--green)} .badge.live::before{background:var(--green);animation:pulse 1.6s infinite}
+  .badge.stale{color:#b8860b} .badge.stale::before{background:#b8860b}
+  .badge.err{color:var(--red)} .badge.err::before{background:var(--red)}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  .toast{position:fixed;bottom:18px;right:50%;transform:translateX(50%);background:#2a2417;border:1px solid var(--gold-dim);color:var(--text);
-    padding:10px 20px;border-radius:30px;font-size:13px;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
+
+  .toast{position:fixed;bottom:18px;right:50%;transform:translateX(50%);background:var(--ink);color:#fff;
+    padding:10px 20px;border-radius:30px;font-size:13px;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9;max-width:90vw;text-align:center}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="coin">24</div>
-    <div>
-      <h1>دهبك</h1>
-      <p>سعر الذهب لحظة بلحظة • مدخراتك • زكاتك</p>
+    <div class="coin">Au</div>
+    <div class="names">
+      <h1 id="tAppName">دهبك</h1>
+      <p id="tTagline"></p>
+    </div>
+    <div class="lang-toggle" dir="ltr">
+      <button id="langAr" onclick="setLang('ar')">عربي</button>
+      <button id="langEn" onclick="setLang('en')">EN</button>
     </div>
   </header>
 
   <!-- PRICES -->
   <section class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2>🪙 سعر الذهب دلوقتي</h2>
-      <span id="liveBadge" class="badge-live">مباشر</span>
+    <div class="hero-head">
+      <h2 id="tPriceNow"></h2>
+      <span id="liveBadge" class="badge live"></span>
     </div>
     <div class="hero-price">
       <span class="num" id="g21">—</span>
-      <span class="unit">جنيه / جرام عيار 21</span>
+      <span class="unit" id="tPerGram"></span>
       <span class="chg up" id="chg" style="display:none"></span>
     </div>
+    <div class="spark-wrap" id="sparkWrap">
+      <div class="spark-cap" id="tSparkCap"></div>
+      <svg id="spark" preserveAspectRatio="none" viewBox="0 0 300 52"></svg>
+    </div>
     <div class="grid">
-      <div class="cell"><div class="k">عيار 24</div><div class="v" id="g24">—</div></div>
-      <div class="cell"><div class="k">عيار 22</div><div class="v" id="g22">—</div></div>
-      <div class="cell"><div class="k">عيار 21</div><div class="v" id="g21b">—</div></div>
-      <div class="cell"><div class="k">عيار 18</div><div class="v" id="g18">—</div></div>
-      <div class="cell"><div class="k">جنيه ذهب</div><div class="v" id="gineh">—</div></div>
-      <div class="cell"><div class="k">الأوقية</div><div class="v" id="oz">—</div></div>
+      <div class="cell"><div class="k" id="k24"></div><div class="v" id="g24">—</div></div>
+      <div class="cell"><div class="k" id="k22"></div><div class="v" id="g22">—</div></div>
+      <div class="cell"><div class="k" id="k21"></div><div class="v" id="g21b">—</div></div>
+      <div class="cell"><div class="k" id="k18"></div><div class="v" id="g18">—</div></div>
+      <div class="cell"><div class="k" id="kGineh"></div><div class="v" id="gineh">—</div></div>
+      <div class="cell"><div class="k" id="kOz"></div><div class="v" id="oz">—</div></div>
     </div>
     <div class="errbox" id="errBox">
-      <b>السعر مش راضي يتجاب دلوقتي.</b><br>
-      اتأكد إن النت شغال، ولو الواي فاي أو الشبكة حاجبة الموقع جرّب شبكة تانية.
+      <b id="tErrTitle"></b><br>
+      <span id="tErrBody"></span>
       <div class="why" id="errWhy"></div>
-      <button class="btn-gold" id="retryBtn">🔄 جرّب تاني</button>
+      <button class="btn-gold" id="retryBtn"></button>
     </div>
     <div class="priceline">
-      <span id="updated">جاري تحميل السعر…</span>
-      <button class="btn-ghost" id="refreshBtn">🔄 تحديث</button>
+      <span id="updated"></span>
+      <button class="btn-ghost" id="refreshBtn"></button>
     </div>
-    <button class="manual-link" id="manualToggle">السعر مش ظاهر؟ ادخله يدويًا</button>
+    <button class="manual-link" id="manualToggle"></button>
     <div class="form-row manual-row" id="manualRow">
-      <input id="fManual" type="number" inputmode="decimal" min="0" step="any" placeholder="سعر جرام عيار 24 بالجنيه">
-      <button class="btn-gold" id="manualBtn">اعتمد</button>
+      <input id="fManual" type="number" inputmode="decimal" min="0" step="any">
+      <button class="btn-gold" id="manualBtn"></button>
     </div>
   </section>
 
   <!-- SAVINGS -->
   <section class="card">
-    <h2>💰 مدخراتي من الذهب</h2>
-    <p class="hint">سجّل اللي تملكه (جرامات أو جنيهات ذهب) وهيتحسب قيمته بالسعر الحالي مع كل تحديث. البيانات بتتحفظ على موبايلك بس.</p>
+    <h2 id="tSavings"></h2>
+    <p class="hint" id="tSavingsHint"></p>
     <div class="form-row">
       <select id="fKarat">
-        <option value="24">عيار 24</option>
-        <option value="21" selected>عيار 21</option>
-        <option value="18">عيار 18</option>
-        <option value="22">عيار 22</option>
-        <option value="gineh">جنيه ذهب</option>
+        <option value="24" data-k="24"></option>
+        <option value="21" data-k="21" selected></option>
+        <option value="18" data-k="18"></option>
+        <option value="22" data-k="22"></option>
+        <option value="gineh" data-k="gineh"></option>
       </select>
-      <input id="fGrams" type="number" inputmode="decimal" min="0" step="any" placeholder="الجرامات / العدد">
-      <input id="fBuy" type="number" inputmode="decimal" min="0" step="any" placeholder="سعر شراء الجرام (اختياري)">
-      <button class="btn-gold" id="addBtn">أضف</button>
+      <input id="fGrams" type="number" inputmode="decimal" min="0" step="any">
+      <input id="fBuy" type="number" inputmode="decimal" min="0" step="any">
+      <button class="btn-gold" id="addBtn"></button>
     </div>
     <div id="holdings"></div>
     <div class="totals" id="totalsBox" style="display:none">
-      <div class="total"><div class="k">القيمة دلوقتي</div><div class="v" id="tValue">—</div></div>
-      <div class="total"><div class="k">إجمالي الذهب الصافي</div><div class="v" id="tPure">—</div></div>
-      <div class="total"><div class="k">مكسبك / خسارتك</div><div class="v" id="tPL">—</div></div>
+      <div class="total"><div class="k" id="tTValue"></div><div class="v" id="tValue">—</div></div>
+      <div class="total"><div class="k" id="tTPure"></div><div class="v" id="tPure">—</div></div>
+      <div class="total"><div class="k" id="tTPL"></div><div class="v" id="tPL">—</div></div>
     </div>
-    <div style="text-align:center;margin-top:10px"><button class="btn-ghost" id="demoBtn">جرّب بمثال</button></div>
+    <div style="text-align:center;margin-top:10px"><button class="btn-ghost" id="demoBtn"></button></div>
   </section>
 
   <!-- ZAKAT -->
   <section class="card">
-    <h2>🕌 الزكاة</h2>
-    <p class="hint">نصاب الذهب 85 جرام صافي. لو مدخراتك بلغت النصاب وعدّى عليها سنة هجرية (354 يوم)، تجب زكاة 2.5٪.</p>
+    <h2 id="tZakat"></h2>
+    <p class="hint" id="tZakatHint"></p>
     <div id="zakatBox"></div>
     <div class="form-row" id="hawlRow" style="display:none">
       <input id="fHawl" type="date" style="flex:2">
-      <button class="btn-gold" id="hawlBtn">احسب الحَوْل</button>
+      <button class="btn-gold" id="hawlBtn"></button>
     </div>
-    <p class="hint" style="margin-top:8px">حدّد تاريخ وصول مدخراتك للنصاب عشان نحسبلك ميعاد الزكاة. الحساب استرشادي — للفتوى اسأل أهل العلم.</p>
+    <p class="hint" style="margin-top:8px" id="tHawlNote"></p>
   </section>
 
-  <footer>
-    المصدر: سعر الأوقية العالمي × سعر صرف الدولار الرسمي، من أكتر من مصدر مجاني بالتناوب (xaus.com وgold-api.com)، تحديث كل دقيقة.<br>
-    سعر الصاغة المحلي في المحلات بيزيد فرق بسيط (أجرة الصاغة)، والمصنعية مش محسوبة هنا.<br>
-    نموذج تجريبي — النسخة النهائية هتبقى تطبيق على الموبايل بإشعارات للسعر والزكاة.
-  </footer>
+  <footer id="tFooter"></footer>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -184,18 +214,155 @@
 const $ = id => document.getElementById(id);
 const TROY = 31.1034768;
 const FETCH_TIMEOUT = 7000;
+
+const STR = {
+  ar: {
+    title: 'دهبك — سعر الذهب ومدخراتك وزكاتك',
+    appName: 'دهبك',
+    tagline: 'سعر الذهب لحظة بلحظة • مدخراتك • زكاتك',
+    priceNow: '🪙 سعر الذهب دلوقتي',
+    live: 'مباشر', savedB: 'سعر محفوظ', manualB: 'سعر يدوي', offlineB: 'غير متصل',
+    perGram: 'جنيه / جرام عيار 21',
+    sparkCap: 'حركة السعر في آخر تحديثات',
+    karat: k => 'عيار ' + k,
+    gineh: 'جنيه ذهب', ounce: 'الأوقية', egp: 'ج', gramWord: 'جرام', pureGram: 'جرام صافي',
+    loading: 'جاري تحميل السعر…', refreshing: 'بيحدّث…', noPrice: 'لسه مفيش سعر.',
+    updatedLine: (t, src, fx) => 'آخر تحديث: ' + t + (src ? ' — المصدر ' + src : '') + (fx ? ' — الدولار ≈ ' + fx + ' ج' : ''),
+    manualLine: t => 'آخر تحديث: ' + t + ' — سعر يدوي',
+    lastAvail: 'آخر سعر متاح معروض تحت.',
+    errTitle: 'السعر مش راضي يتجاب دلوقتي.',
+    errBody: 'اتأكد إن النت شغال، ولو الواي فاي أو الشبكة حاجبة الموقع جرّب شبكة تانية.',
+    errWhy: f => 'مصادر السعر اللي ماوصلتلهاش: ' + f,
+    retry: 'جرّب تاني', refresh: 'تحديث',
+    manualLink: 'السعر مش ظاهر؟ ادخله يدويًا',
+    manualPh: 'سعر جرام عيار 24 بالجنيه', apply: 'اعتمد',
+    savings: '💰 مدخراتي من الذهب',
+    savingsHint: 'سجّل اللي تملكه (جرامات أو جنيهات ذهب) وهيتحسب قيمته بالسعر الحالي مع كل تحديث. البيانات بتتحفظ على موبايلك بس.',
+    gramsPh: 'الجرامات / العدد', buyPh: 'سعر شراء الجرام (اختياري)', add: 'أضف', example: 'جرّب بمثال',
+    empty: 'لسه مفيش مدخرات مسجلة.<br>أضف أول قطعة ذهب تملكها من الفورم فوق 👆',
+    waiting: n => 'عندك ' + n + ' قطعة مسجلة — بنحمّل السعر عشان نحسب قيمتها…',
+    boughtAt: p => 'اشتريت الجرام بـ ' + p + ' ج',
+    tValue: 'القيمة دلوقتي', tPure: 'إجمالي الذهب الصافي', tPL: 'مكسبك / خسارتك',
+    zakat: '🕌 الزكاة',
+    zakatHint: 'نصاب الذهب 85 جرام صافي. لو مدخراتك بلغت النصاب وعدّى عليها سنة هجرية (354 يوم)، تجب زكاة 2.5٪.',
+    zNisabInfo: (v, g) => 'النصاب دلوقتي ≈ <b>' + v + ' جنيه</b> (85 جرام صافي × ' + g + ' ج).<br>سجّل مدخراتك وهنقولك وصلت النصاب ولا لسه.',
+    zBelow: (pure, nisabV, remain) => 'مدخراتك <b>' + pure + ' جرام صافي</b> — لسه ماوصلتش النصاب (85 جرام ≈ ' + nisabV + ' ج).<br>فاضل <b>' + remain + ' جرام</b> وتبدأ العدّ.',
+    zAboveNoDate: 'مدخراتك بلغت النصاب ✅ حدّد تحت إمتى وصلت للنصاب عشان نحسب الحَوْل. بالسعر الحالي الزكاة هتكون:',
+    zFuture: (hijri, greg, days) => 'حَوْلك يكمّل <b>' + hijri + '</b> (' + greg + ') — فاضل <b>' + days + ' يوم</b>. الزكاة المتوقعة بالسعر الحالي:',
+    zPast: (hijri, days) => 'حَوْلك كمّل من ' + days + ' يوم (' + hijri + '). <b>الزكاة مستحقة دلوقتي:</b>',
+    zNote: (val, pure) => '2.5٪ من ' + val + ' ج (قيمة ' + pure + ' جرام صافي بالسعر الحالي)',
+    zEGP: 'جنيه',
+    hawlBtn: 'احسب الحَوْل',
+    hawlNote: 'حدّد تاريخ وصول مدخراتك للنصاب عشان نحسبلك ميعاد الزكاة. الحساب استرشادي — للفتوى اسأل أهل العلم.',
+    footer: 'المصدر: سعر الأوقية العالمي × سعر صرف الدولار الرسمي، من أكتر من مصدر مجاني بالتناوب (xaus.com وgold-api.com)، تحديث كل دقيقة.<br>سعر الصاغة المحلي في المحلات بيزيد فرق بسيط (أجرة الصاغة)، والمصنعية مش محسوبة هنا.<br>نموذج تجريبي — النسخة النهائية هتبقى تطبيق على الموبايل بإشعارات للسعر والزكاة.',
+    tEnterWeight: 'اكتب الوزن الأول', tSaved: 'اتسجلت ✅', tDeleted: 'اتمسحت',
+    tExample: 'مثال جاهز — امسحه بعلامة 🗑 لما تسجل دهبك', tPickDate: 'اختار التاريخ',
+    tHawlDone: 'اتحسب الحَوْل ✅', tEnterManual: 'اكتب سعر جرام عيار 24', tManualDone: 'اتعمل بالسعر اليدوي ✅',
+    piece: 'قطعة',
+  },
+  en: {
+    title: 'Dahbak — live gold price, savings & zakat',
+    appName: 'Dahbak',
+    tagline: 'Live gold price • Your savings • Your zakat',
+    priceNow: '🪙 Gold price now',
+    live: 'Live', savedB: 'Saved price', manualB: 'Manual price', offlineB: 'Offline',
+    perGram: 'EGP / gram of 21K',
+    sparkCap: 'Price moves across recent updates',
+    karat: k => k + 'K',
+    gineh: 'Gold pound', ounce: 'Ounce', egp: 'EGP', gramWord: 'g', pureGram: 'g pure',
+    loading: 'Loading the price…', refreshing: 'Refreshing…', noPrice: 'No price yet.',
+    updatedLine: (t, src, fx) => 'Updated: ' + t + (src ? ' — source ' + src : '') + (fx ? ' — USD ≈ ' + fx + ' EGP' : ''),
+    manualLine: t => 'Updated: ' + t + ' — manual price',
+    lastAvail: 'Showing the last available price.',
+    errTitle: 'The price could not be fetched right now.',
+    errBody: 'Check your connection. If your wifi or network is blocking the source, try another network.',
+    errWhy: f => 'Sources that did not respond: ' + f,
+    retry: 'Try again', refresh: 'Refresh',
+    manualLink: "Price not showing? Enter it manually",
+    manualPh: 'Price of 24K gram in EGP', apply: 'Apply',
+    savings: '💰 My gold savings',
+    savingsHint: 'Record what you own (grams or gold pounds) and its value updates with every price refresh. Data stays on your device only.',
+    gramsPh: 'Grams / count', buyPh: 'Buy price per gram (optional)', add: 'Add', example: 'Try an example',
+    empty: 'No savings recorded yet.<br>Add your first piece of gold from the form above 👆',
+    waiting: n => n + ' piece(s) saved — loading the price to value them…',
+    boughtAt: p => 'Bought at ' + p + ' EGP/g',
+    tValue: 'Value now', tPure: 'Total pure gold', tPL: 'Profit / loss',
+    zakat: '🕌 Zakat',
+    zakatHint: 'The nisab is 85 g of pure gold. If your savings reach it and a lunar year (354 days) passes, 2.5% zakat is due.',
+    zNisabInfo: (v, g) => 'Nisab now ≈ <b>' + v + ' EGP</b> (85 g pure × ' + g + ' EGP).<br>Record your savings and we will tell you whether you reached it.',
+    zBelow: (pure, nisabV, remain) => 'Your savings: <b>' + pure + ' g pure</b> — below the nisab (85 g ≈ ' + nisabV + ' EGP).<br><b>' + remain + ' g</b> to go before the count starts.',
+    zAboveNoDate: 'Your savings reached the nisab ✅ Pick below when you reached it so we can count the hawl. At the current price the zakat would be:',
+    zFuture: (hijri, greg, days) => 'Your hawl completes on <b>' + hijri + '</b> (' + greg + ') — <b>' + days + ' days</b> left. Expected zakat at the current price:',
+    zPast: (hijri, days) => 'Your hawl completed ' + days + ' days ago (' + hijri + '). <b>Zakat is due now:</b>',
+    zNote: (val, pure) => '2.5% of ' + val + ' EGP (value of ' + pure + ' g pure at the current price)',
+    zEGP: 'EGP',
+    hawlBtn: 'Calculate hawl',
+    hawlNote: 'Pick the date your savings reached the nisab to get your zakat due date. This is an estimate — for a fatwa ask a scholar.',
+    footer: 'Source: global spot ounce × official USD/EGP rate, from rotating free providers (xaus.com and gold-api.com), refreshed every minute.<br>Local Egyptian shop prices run slightly higher (sagha premium); workmanship is not included.<br>Demo — the final version will be a mobile app with price and zakat alerts.',
+    tEnterWeight: 'Enter the weight first', tSaved: 'Saved ✅', tDeleted: 'Deleted',
+    tExample: 'Example added — delete it with 🗑 when you record your own gold', tPickDate: 'Pick a date',
+    tHawlDone: 'Hawl calculated ✅', tEnterManual: 'Enter the 24K gram price', tManualDone: 'Manual price applied ✅',
+    piece: 'piece(s)',
+  }
+};
+
+const urlLang = new URLSearchParams(location.search).get('lang');
+let lang = (urlLang === 'en' || urlLang === 'ar') ? urlLang : (localStorage.getItem('dehbak.lang') || 'ar');
+let S = STR[lang];
+
 let price = null;            // {gram24Egp, usdEgp, ozUsd, updatedAt, source, manual}
 let prevGram24 = null;
 let manualMode = false;
 let holdings = JSON.parse(localStorage.getItem('dehbak.holdings') || '[]');
 let hawlStart = localStorage.getItem('dehbak.hawl') || '';
 const fmt = (n, d=0) => n.toLocaleString('en-US', {maximumFractionDigits:d, minimumFractionDigits:d});
-const fmtEn = (n, d=2) => n.toLocaleString('en-US', {maximumFractionDigits:d, minimumFractionDigits:d});
-const karatFactor = k => k==='gineh' ? (8*21/24) : (+k)/24;   // pure grams per unit
-const karatName  = k => k==='gineh' ? 'جنيه ذهب' : 'عيار '+({24:'24',22:'22',21:'21',18:'18'}[k]);
+const karatFactor = k => k==='gineh' ? (8*21/24) : (+k)/24;
+const karatName = k => k==='gineh' ? S.gineh : S.karat(k);
 
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.style.opacity=1; setTimeout(()=>t.style.opacity=0,2200); }
 
+/* ---------- language ---------- */
+function setLang(l){
+  lang = l; S = STR[l];
+  localStorage.setItem('dehbak.lang', l);
+  document.documentElement.lang = l;
+  document.documentElement.dir = l==='ar' ? 'rtl' : 'ltr';
+  document.documentElement.className = l;
+  document.title = S.title;
+  applyLang();
+}
+function applyLang(){
+  $('tAppName').textContent = S.appName;
+  $('tTagline').textContent = S.tagline;
+  $('tPriceNow').textContent = S.priceNow;
+  $('tPerGram').textContent = S.perGram;
+  $('tSparkCap').textContent = S.sparkCap;
+  $('k24').textContent = S.karat('24'); $('k22').textContent = S.karat('22');
+  $('k21').textContent = S.karat('21'); $('k18').textContent = S.karat('18');
+  $('kGineh').textContent = S.gineh; $('kOz').textContent = S.ounce;
+  $('tErrTitle').textContent = S.errTitle; $('tErrBody').textContent = S.errBody;
+  $('retryBtn').textContent = '🔄 ' + S.retry;
+  $('refreshBtn').textContent = '🔄 ' + S.refresh;
+  $('manualToggle').textContent = S.manualLink;
+  $('fManual').placeholder = S.manualPh; $('manualBtn').textContent = S.apply;
+  $('tSavings').textContent = S.savings; $('tSavingsHint').textContent = S.savingsHint;
+  $('fGrams').placeholder = S.gramsPh; $('fBuy').placeholder = S.buyPh;
+  $('addBtn').textContent = S.add; $('demoBtn').textContent = S.example;
+  $('tTValue').textContent = S.tValue; $('tTPure').textContent = S.tPure; $('tTPL').textContent = S.tPL;
+  $('tZakat').textContent = S.zakat; $('tZakatHint').textContent = S.zakatHint;
+  $('hawlBtn').textContent = S.hawlBtn; $('tHawlNote').textContent = S.hawlNote;
+  $('tFooter').innerHTML = S.footer;
+  document.querySelectorAll('#fKarat option').forEach(o => o.textContent = karatName(o.dataset.k));
+  $('langAr').classList.toggle('on', lang==='ar');
+  $('langEn').classList.toggle('on', lang==='en');
+  // re-render dynamic
+  setBadge(badgeCls, badgeTxt());
+  if(price) renderAll(); else { renderHoldingsSafe(); renderZakat(0,0); }
+  renderSpark();
+  if($('updated').dataset.state==='loading') $('updated').textContent = S.loading;
+}
+
+/* ---------- price fetching ---------- */
 function fetchJSON(url, timeoutMs){
   return new Promise((resolve, reject)=>{
     const ctrl = new AbortController();
@@ -206,8 +373,6 @@ function fetchJSON(url, timeoutMs){
       .catch(e=>{ clearTimeout(timer); reject(e); });
   });
 }
-
-// كل مصدر بيرجع {gram24Egp, usdEgp, ozUsd, source}
 const SOURCES = [
   { name: 'xaus.com', get: async ()=>{
       const j = await fetchJSON('https://xaus.com/api/v1/spot?currency=EGP&unit=gram');
@@ -234,72 +399,109 @@ const SOURCES = [
   }},
 ];
 
-function setBadge(cls, txt){ const b=$('liveBadge'); b.className=cls; b.textContent=txt; }
+let badgeCls = 'live';
+function badgeTxt(){ return badgeCls==='live' ? S.live : badgeCls==='stale' ? (price && price.manual ? S.manualB : S.savedB) : S.offlineB; }
+function setBadge(cls, txt){ const b=$('liveBadge'); badgeCls=cls; b.className='badge '+cls; b.textContent=txt; }
+
+function pushHistory(p){
+  const hist = JSON.parse(localStorage.getItem('dehbak.hist') || '[]');
+  const last = hist[hist.length-1];
+  if(!last || Date.now()-last.t > 30000){
+    hist.push({t: Date.now(), p: p});
+    while(hist.length > 240) hist.shift();
+    localStorage.setItem('dehbak.hist', JSON.stringify(hist));
+  }
+}
 
 async function fetchPrice(){
   manualMode = false;
   $('errBox').style.display='none';
-  if(!price) $('updated').textContent = 'جاري تحميل السعر…';
+  if(!price){ $('updated').textContent = S.loading; $('updated').dataset.state='loading'; }
   const fails = [];
   for(const s of SOURCES){
     try{
       const p = await s.get();
       price = { ...p, updatedAt: new Date(), manual: false };
       localStorage.setItem('dehbak.price', JSON.stringify(price));
-      setBadge('badge-live','مباشر');
+      pushHistory(price.gram24Egp);
+      setBadge('live', S.live);
+      $('updated').dataset.state='';
       renderAll();
       return;
     }catch(e){ fails.push(s.name); }
   }
-  // كل المصادر فشلت
-  setBadge('badge-err','غير متصل');
-  $('errWhy').textContent = 'مصادر السعر اللي ماوصلتلهاش: ' + fails.join('، ');
+  setBadge('err', S.offlineB);
+  $('errWhy').textContent = S.errWhy(fails.join(', '));
   $('errBox').style.display='block';
-  if(price){ $('updated').textContent = 'آخر سعر متاح معروض تحت.'; }
-  else { $('updated').textContent = 'لسه مفيش سعر.'; }
+  $('updated').textContent = price ? S.lastAvail : S.noPrice;
+  $('updated').dataset.state='';
   renderHoldingsSafe();
 }
 
 function loadCached(){
   const c = localStorage.getItem('dehbak.price');
   if(c){ price = JSON.parse(c); price.updatedAt = new Date(price.updatedAt);
-    setBadge('badge-stale', price.manual ? 'سعر يدوي' : 'سعر محفوظ');
+    setBadge('stale', badgeTxt());
     renderAll(); }
 }
 
 function gramPrice(k){ return price.gram24Egp * (k==='gineh' ? (8*21/24) : (+k)/24); }
+function renderAll(){ renderPrices(); renderHoldings(); renderSpark(); }
 
-function renderAll(){ renderPrices(); renderHoldings(); }
+function fmtTime(d){ return d.toLocaleTimeString(lang==='ar' ? 'ar-EG-u-nu-latn' : 'en-GB', {hour:'2-digit',minute:'2-digit'}); }
+function fmtDate(d){ return d.toLocaleDateString(lang==='ar' ? 'ar-EG-u-nu-latn' : 'en-GB', {day:'numeric',month:'long',year:'numeric'}); }
+function fmtHijri(d){ return new Intl.DateTimeFormat((lang==='ar'?'ar-SA':'en')+'-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'long',year:'numeric'}).format(d); }
 
 function renderPrices(){
   if(!price) return;
   const g24=price.gram24Egp, g22=g24*22/24, g21=g24*21/24, g18=g24*18/24;
-  $('g24').innerHTML = fmt(g24)+' <small>ج</small>';
-  $('g22').innerHTML = fmt(g22)+' <small>ج</small>';
-  $('g21b').innerHTML = fmt(g21)+' <small>ج</small>';
+  $('g24').innerHTML = fmt(g24)+' <small>'+S.egp+'</small>';
+  $('g22').innerHTML = fmt(g22)+' <small>'+S.egp+'</small>';
+  $('g21b').innerHTML = fmt(g21)+' <small>'+S.egp+'</small>';
   $('g21').textContent = fmt(g21);
-  $('g18').innerHTML = fmt(g18)+' <small>ج</small>';
-  $('gineh').innerHTML = fmt(g21*8)+' <small>ج</small>';
-  $('oz').innerHTML = price.ozUsd ? fmtEn(price.ozUsd,0)+' <small>$</small>' : '—';
+  $('g18').innerHTML = fmt(g18)+' <small>'+S.egp+'</small>';
+  $('gineh').innerHTML = fmt(g21*8)+' <small>'+S.egp+'</small>';
+  $('oz').innerHTML = price.ozUsd ? fmt(price.ozUsd)+' <small>$</small>' : '—';
   if(prevGram24 && !price.manual){
     const d = g24 - prevGram24, pct = d/prevGram24*100;
-    const el = $('chg'); el.style.display='inline-block';
-    el.className = 'chg ' + (d>=0?'up':'down');
-    el.textContent = (d>=0?'▲ ':'▼ ') + fmt(Math.abs(pct),2) + '٪';
+    const el = $('chg');
+    if(Math.abs(pct) < 0.005) { el.style.display='none'; }
+    else {
+      el.style.display='inline-block';
+      el.className = 'chg ' + (d>=0?'up':'down');
+      el.textContent = (d>=0?'▲ ':'▼ ') + fmt(Math.abs(pct),2) + (lang==='ar'?'٪':'%');
+    }
   }
   prevGram24 = g24;
-  const t = price.updatedAt.toLocaleTimeString('ar-EG-u-nu-latn',{hour:'2-digit',minute:'2-digit'});
-  let line = 'آخر تحديث: ' + t;
-  if(price.manual) line += ' — سعر يدوي';
-  else line += ' — المصدر ' + price.source;
-  if(price.usdEgp) line += ' — الدولار ≈ ' + fmt(price.usdEgp,2) + ' ج';
-  $('updated').textContent = line;
+  $('updated').textContent = price.manual
+    ? S.manualLine(fmtTime(price.updatedAt))
+    : S.updatedLine(fmtTime(price.updatedAt), price.source, price.usdEgp ? fmt(price.usdEgp,2) : null);
+  $('updated').dataset.state='';
+}
+
+function renderSpark(){
+  const wrap = $('sparkWrap'), svg = $('spark');
+  const hist = JSON.parse(localStorage.getItem('dehbak.hist') || '[]');
+  if(hist.length < 2){ wrap.style.display='none'; return; }
+  wrap.style.display='block';
+  const pts = hist.slice(-60);
+  const vals = pts.map(p=>p.p);
+  const min = Math.min(...vals), max = Math.max(...vals), span = (max-min) || 1;
+  const W=300, H=52, PAD=4;
+  const stepX = (W-2*PAD)/(pts.length-1);
+  const coords = pts.map((p,i)=>[PAD+i*stepX, H-PAD-((p.p-min)/span)*(H-2*PAD)]);
+  const line = coords.map((c,i)=>(i?'L':'M')+c[0].toFixed(1)+','+c[1].toFixed(1)).join(' ');
+  const area = line + ` L${coords[coords.length-1][0].toFixed(1)},${H} L${coords[0][0].toFixed(1)},${H} Z`;
+  const up = vals[vals.length-1] >= vals[0];
+  const col = up ? '#1a9e5c' : '#d43a3a';
+  svg.setAttribute('dir','ltr');
+  svg.innerHTML = `<path d="${area}" fill="${col}" opacity="0.12"/><path d="${line}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/>`;
 }
 
 function renderHoldingsSafe(){
   const box = $('holdings');
-  if(!holdings.length){ box.innerHTML = '<div class="empty">لسه مفيش مدخرات مسجلة.<br>أضف أول قطعة ذهب تملكها من الفورم فوق 👆</div>'; }
-  else { box.innerHTML = '<div class="empty">عندك '+holdings.length+' قطعة مسجلة — بنحمّل السعر عشان نحسب قيمتها…</div>'; }
+  if(!holdings.length){ box.innerHTML = '<div class="empty">'+S.empty+'</div>'; }
+  else { box.innerHTML = '<div class="empty">'+S.waiting(fmt(holdings.length))+'</div>'; }
 }
 
 function renderHoldings(){
@@ -313,30 +515,30 @@ function renderHoldings(){
     let plHtml='';
     if(h.buy){ const cost = h.grams*h.buy; totalCost += cost; valWithCost += cur; hasCost = true;
       const pl = cur-cost, p = pl/cost*100;
-      plHtml = `<div class="pl ${pl>=0?'up':'down'}">${pl>=0?'+':'−'}${fmt(Math.abs(pl))} ج (${fmt(Math.abs(p),1)}٪)</div>`;
+      plHtml = `<div class="pl ${pl>=0?'up':'down'}">${pl>=0?'+':'−'}${fmt(Math.abs(pl))} ${S.egp} (${fmt(Math.abs(p),1)}${lang==='ar'?'٪':'%'})</div>`;
     }
     const row = document.createElement('div'); row.className='holding';
     row.innerHTML = `<div class="info">
-        <div class="t">${fmt(h.grams, h.grams%1?2:0)} ${h.karat==='gineh'?'':'جرام'} ${karatName(h.karat)}</div>
-        <div class="s">${h.buy? 'اشتريت الجرام بـ '+fmt(h.buy)+' ج':''}</div>
+        <div class="t">${fmt(h.grams, h.grams%1?2:0)} ${h.karat==='gineh'?'':S.gramWord+' '}${karatName(h.karat)}</div>
+        <div class="s">${h.buy? S.boughtAt(fmt(h.buy)):''}</div>
       </div>
-      <div class="val"><div class="n">${fmt(cur)} ج</div>${plHtml}</div>
+      <div class="val"><div class="n">${fmt(cur)} ${S.egp}</div>${plHtml}</div>
       <button class="del" data-id="${h.id}">🗑</button>`;
     box.appendChild(row);
   });
-  box.querySelectorAll('.del').forEach(b=>b.onclick=()=>{ holdings = holdings.filter(x=>x.id!=b.dataset.id); save(); toast('اتمسحت'); });
+  box.querySelectorAll('.del').forEach(b=>b.onclick=()=>{ holdings = holdings.filter(x=>x.id!=b.dataset.id); save(); toast(S.tDeleted); });
   if(holdings.length){
     $('totalsBox').style.display='grid';
-    $('tValue').textContent = fmt(totalVal)+' ج';
-    $('tPure').textContent = fmt(totalPure,2)+' جم';
+    $('tValue').textContent = fmt(totalVal)+' '+S.egp;
+    $('tPure').textContent = fmt(totalPure,2)+' '+(lang==='ar'?'جم':'g');
     const plEl = $('tPL');
     if(hasCost){ const pl = valWithCost-totalCost;
-      plEl.textContent = (pl>=0?'+':'−')+fmt(Math.abs(pl))+' ج';
+      plEl.textContent = (pl>=0?'+':'−')+fmt(Math.abs(pl))+' '+S.egp;
       plEl.style.color = pl>=0? 'var(--green)':'var(--red)';
-    } else { plEl.textContent='—'; plEl.style.color='var(--muted)'; }
+    } else { plEl.textContent='—'; plEl.style.color='var(--ink2)'; }
   } else {
     $('totalsBox').style.display='none';
-    box.innerHTML = '<div class="empty">لسه مفيش مدخرات مسجلة.<br>أضف أول قطعة ذهب تملكها من الفورم فوق 👆</div>';
+    box.innerHTML = '<div class="empty">'+S.empty+'</div>';
   }
   renderZakat(totalPure, totalVal);
 }
@@ -346,31 +548,29 @@ function renderZakat(pure, val){
   if(!price){ box.innerHTML=''; return; }
   const nisabValue = 85 * price.gram24Egp;
   if(pure <= 0){
-    box.innerHTML = `<div class="zakat-box no">النصاب دلوقتي ≈ <b>${fmt(nisabValue)} جنيه</b> (85 جرام صافي × ${fmt(price.gram24Egp)} ج).<br>سجّل مدخراتك وهنقولك وصلت النصاب ولا لسه.</div>`;
+    box.innerHTML = `<div class="zakat-box no">${S.zNisabInfo(fmt(nisabValue), fmt(price.gram24Egp))}</div>`;
     $('hawlRow').style.display='none'; return;
   }
   if(pure < 85){
     const pct = Math.min(100, pure/85*100);
-    box.innerHTML = `<div class="zakat-box no">مدخراتك <b>${fmt(pure,2)} جرام صافي</b> — لسه ماوصلتش النصاب (85 جرام ≈ ${fmt(nisabValue)} ج).<br>فاضل <b>${fmt(85-pure,2)} جرام</b> وتبدأ العدّ.
+    box.innerHTML = `<div class="zakat-box no">${S.zBelow(fmt(pure,2), fmt(nisabValue), fmt(85-pure,2))}
       <div class="prog"><i style="width:${pct}%"></i></div></div>`;
     $('hawlRow').style.display='none'; return;
   }
   $('hawlRow').style.display='flex';
   const z = val * 0.025;
-  let hawlHtml='';
+  let hawlHtml;
   if(hawlStart){
     const start = new Date(hawlStart), due = new Date(start); due.setDate(due.getDate()+354);
     const days = Math.ceil((due - Date.now())/86400000);
-    const hijriDue = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'long',year:'numeric'}).format(due);
-    const gregDue = due.toLocaleDateString('ar-EG-u-nu-latn',{day:'numeric',month:'long',year:'numeric'});
     hawlHtml = days>0
-      ? `حَوْلك يكمّل <b>${hijriDue}</b> (${gregDue}) — فاضل <b>${fmt(days)} يوم</b>. الزكاة المتوقعة بالسعر الحالي:`
-      : `حَوْلك كمّل من ${Math.abs(days)} يوم (${hijriDue}). <b>الزكاة مستحقة دلوقتي:</b>`;
+      ? S.zFuture(fmtHijri(due), fmtDate(due), fmt(days))
+      : S.zPast(fmtHijri(due), fmt(Math.abs(days)));
   } else {
-    hawlHtml = 'مدخراتك بلغت النصاب ✅ حدّد تحت إمتى وصلت للنصاب عشان نحسب الحَوْل. بالسعر الحالي الزكاة هتكون:';
+    hawlHtml = S.zAboveNoDate;
   }
-  box.innerHTML = `<div class="zakat-box ok">${hawlHtml}<div class="zakat-big">${fmt(z)} جنيه</div>
-    <span class="hint">2.5٪ من ${fmt(val)} ج (قيمة ${fmt(pure,2)} جرام صافي بالسعر الحالي)</span></div>`;
+  box.innerHTML = `<div class="zakat-box ok">${hawlHtml}<div class="zakat-big">${fmt(z)} ${S.zEGP}</div>
+    <span class="hint">${S.zNote(fmt(val), fmt(pure,2))}</span></div>`;
 }
 
 function save(){ localStorage.setItem('dehbak.holdings', JSON.stringify(holdings)); renderHoldings(); }
@@ -379,42 +579,49 @@ $('addBtn').onclick = ()=>{
   const karat = $('fKarat').value;
   const grams = parseFloat($('fGrams').value);
   const buy = parseFloat($('fBuy').value);
-  if(!grams || grams<=0){ toast('اكتب الوزن الأول'); return; }
+  if(!grams || grams<=0){ toast(S.tEnterWeight); return; }
   holdings.push({id:Date.now(), karat, grams, buy: buy>0?buy:null});
   $('fGrams').value=''; $('fBuy').value='';
-  save(); toast('اتسجلت ✅');
+  save(); toast(S.tSaved);
 };
 $('demoBtn').onclick = ()=>{
   holdings.push({id:Date.now(), karat:'21', grams:10, buy:5200});
   holdings.push({id:Date.now()+1, karat:'gineh', grams:2, buy:null});
-  save(); toast('مثال جاهز — امسحه بعلامة 🗑 لما تسجل دهبك');
+  save(); toast(S.tExample);
 };
 $('hawlBtn').onclick = ()=>{
   const d = $('fHawl').value;
-  if(!d){ toast('اختار التاريخ'); return; }
-  hawlStart = d; localStorage.setItem('dehbak.hawl', d); renderHoldings(); toast('اتحسب الحَوْل ✅');
+  if(!d){ toast(S.tPickDate); return; }
+  hawlStart = d; localStorage.setItem('dehbak.hawl', d); renderHoldings(); toast(S.tHawlDone);
 };
-$('refreshBtn').onclick = ()=>{ $('updated').textContent='بيحدّث…'; fetchPrice(); };
-$('retryBtn').onclick = ()=>{ $('errBox').style.display='none'; $('updated').textContent='بيحدّث…'; fetchPrice(); };
+$('refreshBtn').onclick = ()=>{ $('updated').textContent=S.refreshing; $('updated').dataset.state='loading'; fetchPrice(); };
+$('retryBtn').onclick = ()=>{ $('errBox').style.display='none'; $('updated').textContent=S.refreshing; $('updated').dataset.state='loading'; fetchPrice(); };
 $('manualToggle').onclick = ()=>{
   const row = $('manualRow');
   row.style.display = row.style.display==='flex' ? 'none' : 'flex';
 };
 $('manualBtn').onclick = ()=>{
   const g = parseFloat($('fManual').value);
-  if(!g || g<=0){ toast('اكتب سعر جرام عيار 24'); return; }
-  price = { gram24Egp: g, usdEgp: price && price.usdEgp, ozUsd: null, updatedAt: new Date(), source: 'يدوي', manual: true };
+  if(!g || g<=0){ toast(S.tEnterManual); return; }
+  price = { gram24Egp: g, usdEgp: price && price.usdEgp, ozUsd: null, updatedAt: new Date(), source: 'manual', manual: true };
   manualMode = true;
   localStorage.setItem('dehbak.price', JSON.stringify(price));
-  setBadge('badge-stale','سعر يدوي');
+  pushHistory(g);
+  setBadge('stale', S.manualB);
   $('errBox').style.display='none';
   $('manualRow').style.display='none';
   $('fManual').value='';
-  renderAll(); toast('اتعمل بالسعر اليدوي ✅');
+  renderAll(); toast(S.tManualDone);
 };
 
+/* boot */
 if(hawlStart) $('fHawl').value = hawlStart;
-renderHoldingsSafe();
+document.documentElement.lang = lang;
+document.documentElement.dir = lang==='ar' ? 'rtl' : 'ltr';
+document.documentElement.className = lang;
+document.title = S.title;
+applyLang();
+$('updated').textContent = S.loading; $('updated').dataset.state='loading';
 loadCached();
 fetchPrice();
 setInterval(()=>{ if(!manualMode) fetchPrice(); }, 60000);
