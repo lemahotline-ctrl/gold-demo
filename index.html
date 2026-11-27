@@ -79,19 +79,29 @@
   .form-row input{flex:1;min-width:90px}
 
   /* holdings */
-  .holding{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+  .add-form select,.add-form input{padding:14px 14px;font-size:16.5px;border-radius:14px}
+  .add-form #fBuy{flex:1 1 100%}
+  .add-form .btn-gold{flex:1 1 100%;padding:15px;font-size:17px;border-radius:14px}
+  .holding{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:16px 14px;margin-top:12px}
   .holding .info{flex:1}
-  .holding .t{font-weight:800;font-size:14px}
-  .holding .s{color:var(--ink2);font-size:11.5px;margin-top:1px}
+  .holding .t{font-weight:800;font-size:17px}
+  .holding .s{color:var(--ink2);font-size:13px;margin-top:2px}
   .holding .val{text-align:end}
-  .holding .val .n{font-weight:800;font-size:14.5px}
-  .holding .val .pl{font-size:11.5px;font-weight:800}
+  .holding .val .n{font-weight:800;font-size:18.5px}
+  .holding .val .pl{font-size:14.5px;font-weight:800;margin-top:2px}
   .pl.up{color:var(--green)} .pl.down{color:var(--red)}
-  .del{background:none;color:#b9b09a;font-size:17px;padding:6px 8px}
-  .totals{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:14px}
-  .total{background:var(--gold-soft);border:1px solid #e5d5a8;border-radius:14px;padding:11px 6px;text-align:center}
-  .total .k{color:var(--ink2);font-size:10.5px;font-weight:700}
-  .total .v{font-size:15.5px;font-weight:800;color:var(--gold-strong);margin-top:3px}
+  .del{background:none;color:#b9b09a;font-size:19px;padding:8px 10px}
+  .totals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .total{background:var(--gold-soft);border:1px solid #e5d5a8;border-radius:16px;padding:14px 8px;text-align:center}
+  .total .k{color:var(--ink2);font-size:12px;font-weight:700}
+  .total .v{font-size:18px;font-weight:800;color:var(--gold-strong);margin-top:4px}
+  .total-hero{grid-column:1 / -1;background:linear-gradient(135deg,#f7ecc9,#efdb9d);border-color:#dfc47e;padding:18px 10px}
+  .total-hero .k{font-size:13px}
+  .total-hero .v{font-size:30px;letter-spacing:.3px}
+  .total.up{background:#eef7f1;border-color:#bfe0cc}
+  .total.down{background:#fdf1f1;border-color:#f0c9c9}
+  .total.up .v{color:var(--green)}
+  .total.down .v{color:var(--red)}
   .empty{color:var(--ink2);font-size:13px;text-align:center;padding:18px 8px 6px;line-height:1.85}
 
   /* zakat */
@@ -173,7 +183,7 @@
   <section class="card">
     <h2 id="tSavings"></h2>
     <p class="hint" id="tSavingsHint"></p>
-    <div class="form-row">
+    <div class="form-row add-form">
       <select id="fKarat">
         <option value="24" data-k="24"></option>
         <option value="21" data-k="21" selected></option>
@@ -187,9 +197,9 @@
     </div>
     <div id="holdings"></div>
     <div class="totals" id="totalsBox" style="display:none">
-      <div class="total"><div class="k" id="tTValue"></div><div class="v" id="tValue">—</div></div>
+      <div class="total total-hero"><div class="k" id="tTValue"></div><div class="v" id="tValue">—</div></div>
       <div class="total"><div class="k" id="tTPure"></div><div class="v" id="tPure">—</div></div>
-      <div class="total"><div class="k" id="tTPL"></div><div class="v" id="tPL">—</div></div>
+      <div class="total" id="tPLBox"><div class="k" id="tTPL"></div><div class="v" id="tPL">—</div></div>
     </div>
     <div style="text-align:center;margin-top:10px"><button class="btn-ghost" id="demoBtn"></button></div>
   </section>
@@ -531,10 +541,12 @@ function renderHoldings(){
     $('totalsBox').style.display='grid';
     $('tValue').textContent = fmt(totalVal)+' '+S.egp;
     $('tPure').textContent = fmt(totalPure,2)+' '+(lang==='ar'?'جم':'g');
-    const plEl = $('tPL');
-    if(hasCost){ const pl = valWithCost-totalCost;
-      plEl.textContent = (pl>=0?'+':'−')+fmt(Math.abs(pl))+' '+S.egp;
-      plEl.style.color = pl>=0? 'var(--green)':'var(--red)';
+    const plEl = $('tPL'), plBox = $('tPLBox');
+    plBox.classList.remove('up','down');
+    if(hasCost){ const pl = valWithCost-totalCost, pPct = pl/totalCost*100;
+      plEl.textContent = (pl>=0?'+':'−')+fmt(Math.abs(pl))+' '+S.egp+' ('+fmt(Math.abs(pPct),1)+(lang==='ar'?'٪':'%')+')';
+      plEl.style.color = '';
+      plBox.classList.add(pl>=0?'up':'down');
     } else { plEl.textContent='—'; plEl.style.color='var(--ink2)'; }
   } else {
     $('totalsBox').style.display='none';
