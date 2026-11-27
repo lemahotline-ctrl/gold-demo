@@ -92,7 +92,7 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="coin">٢٤</div>
+    <div class="coin">24</div>
     <div>
       <h1>دهبك</h1>
       <p>سعر الذهب لحظة بلحظة • مدخراتك • زكاتك</p>
@@ -107,14 +107,14 @@
     </div>
     <div class="hero-price">
       <span class="num" id="g21">—</span>
-      <span class="unit">جنيه / جرام عيار ٢١</span>
+      <span class="unit">جنيه / جرام عيار 21</span>
       <span class="chg up" id="chg" style="display:none"></span>
     </div>
     <div class="grid">
-      <div class="cell"><div class="k">عيار ٢٤</div><div class="v" id="g24">—</div></div>
-      <div class="cell"><div class="k">عيار ٢٢</div><div class="v" id="g22">—</div></div>
-      <div class="cell"><div class="k">عيار ٢١</div><div class="v" id="g21b">—</div></div>
-      <div class="cell"><div class="k">عيار ١٨</div><div class="v" id="g18">—</div></div>
+      <div class="cell"><div class="k">عيار 24</div><div class="v" id="g24">—</div></div>
+      <div class="cell"><div class="k">عيار 22</div><div class="v" id="g22">—</div></div>
+      <div class="cell"><div class="k">عيار 21</div><div class="v" id="g21b">—</div></div>
+      <div class="cell"><div class="k">عيار 18</div><div class="v" id="g18">—</div></div>
       <div class="cell"><div class="k">جنيه ذهب</div><div class="v" id="gineh">—</div></div>
       <div class="cell"><div class="k">الأوقية</div><div class="v" id="oz">—</div></div>
     </div>
@@ -130,7 +130,7 @@
     </div>
     <button class="manual-link" id="manualToggle">السعر مش ظاهر؟ ادخله يدويًا</button>
     <div class="form-row manual-row" id="manualRow">
-      <input id="fManual" type="number" inputmode="decimal" min="0" step="any" placeholder="سعر جرام عيار ٢٤ بالجنيه">
+      <input id="fManual" type="number" inputmode="decimal" min="0" step="any" placeholder="سعر جرام عيار 24 بالجنيه">
       <button class="btn-gold" id="manualBtn">اعتمد</button>
     </div>
   </section>
@@ -141,10 +141,10 @@
     <p class="hint">سجّل اللي تملكه (جرامات أو جنيهات ذهب) وهيتحسب قيمته بالسعر الحالي مع كل تحديث. البيانات بتتحفظ على موبايلك بس.</p>
     <div class="form-row">
       <select id="fKarat">
-        <option value="24">عيار ٢٤</option>
-        <option value="21" selected>عيار ٢١</option>
-        <option value="18">عيار ١٨</option>
-        <option value="22">عيار ٢٢</option>
+        <option value="24">عيار 24</option>
+        <option value="21" selected>عيار 21</option>
+        <option value="18">عيار 18</option>
+        <option value="22">عيار 22</option>
         <option value="gineh">جنيه ذهب</option>
       </select>
       <input id="fGrams" type="number" inputmode="decimal" min="0" step="any" placeholder="الجرامات / العدد">
@@ -163,7 +163,7 @@
   <!-- ZAKAT -->
   <section class="card">
     <h2>🕌 الزكاة</h2>
-    <p class="hint">نصاب الذهب ٨٥ جرام صافي. لو مدخراتك بلغت النصاب وعدّى عليها سنة هجرية (٣٥٤ يوم)، تجب زكاة ٢.٥٪.</p>
+    <p class="hint">نصاب الذهب 85 جرام صافي. لو مدخراتك بلغت النصاب وعدّى عليها سنة هجرية (354 يوم)، تجب زكاة 2.5٪.</p>
     <div id="zakatBox"></div>
     <div class="form-row" id="hawlRow" style="display:none">
       <input id="fHawl" type="date" style="flex:2">
@@ -189,10 +189,10 @@ let prevGram24 = null;
 let manualMode = false;
 let holdings = JSON.parse(localStorage.getItem('dehbak.holdings') || '[]');
 let hawlStart = localStorage.getItem('dehbak.hawl') || '';
-const fmt = (n, d=0) => n.toLocaleString('ar-EG', {maximumFractionDigits:d, minimumFractionDigits:d});
+const fmt = (n, d=0) => n.toLocaleString('en-US', {maximumFractionDigits:d, minimumFractionDigits:d});
 const fmtEn = (n, d=2) => n.toLocaleString('en-US', {maximumFractionDigits:d, minimumFractionDigits:d});
 const karatFactor = k => k==='gineh' ? (8*21/24) : (+k)/24;   // pure grams per unit
-const karatName  = k => k==='gineh' ? 'جنيه ذهب' : 'عيار '+({24:'٢٤',22:'٢٢',21:'٢١',18:'١٨'}[k]);
+const karatName  = k => k==='gineh' ? 'جنيه ذهب' : 'عيار '+({24:'24',22:'22',21:'21',18:'18'}[k]);
 
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.style.opacity=1; setTimeout(()=>t.style.opacity=0,2200); }
 
@@ -288,7 +288,7 @@ function renderPrices(){
     el.textContent = (d>=0?'▲ ':'▼ ') + fmt(Math.abs(pct),2) + '٪';
   }
   prevGram24 = g24;
-  const t = price.updatedAt.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+  const t = price.updatedAt.toLocaleTimeString('ar-EG-u-nu-latn',{hour:'2-digit',minute:'2-digit'});
   let line = 'آخر تحديث: ' + t;
   if(price.manual) line += ' — سعر يدوي';
   else line += ' — المصدر ' + price.source;
@@ -346,12 +346,12 @@ function renderZakat(pure, val){
   if(!price){ box.innerHTML=''; return; }
   const nisabValue = 85 * price.gram24Egp;
   if(pure <= 0){
-    box.innerHTML = `<div class="zakat-box no">النصاب دلوقتي ≈ <b>${fmt(nisabValue)} جنيه</b> (٨٥ جرام صافي × ${fmt(price.gram24Egp)} ج).<br>سجّل مدخراتك وهنقولك وصلت النصاب ولا لسه.</div>`;
+    box.innerHTML = `<div class="zakat-box no">النصاب دلوقتي ≈ <b>${fmt(nisabValue)} جنيه</b> (85 جرام صافي × ${fmt(price.gram24Egp)} ج).<br>سجّل مدخراتك وهنقولك وصلت النصاب ولا لسه.</div>`;
     $('hawlRow').style.display='none'; return;
   }
   if(pure < 85){
     const pct = Math.min(100, pure/85*100);
-    box.innerHTML = `<div class="zakat-box no">مدخراتك <b>${fmt(pure,2)} جرام صافي</b> — لسه ماوصلتش النصاب (٨٥ جرام ≈ ${fmt(nisabValue)} ج).<br>فاضل <b>${fmt(85-pure,2)} جرام</b> وتبدأ العدّ.
+    box.innerHTML = `<div class="zakat-box no">مدخراتك <b>${fmt(pure,2)} جرام صافي</b> — لسه ماوصلتش النصاب (85 جرام ≈ ${fmt(nisabValue)} ج).<br>فاضل <b>${fmt(85-pure,2)} جرام</b> وتبدأ العدّ.
       <div class="prog"><i style="width:${pct}%"></i></div></div>`;
     $('hawlRow').style.display='none'; return;
   }
@@ -361,8 +361,8 @@ function renderZakat(pure, val){
   if(hawlStart){
     const start = new Date(hawlStart), due = new Date(start); due.setDate(due.getDate()+354);
     const days = Math.ceil((due - Date.now())/86400000);
-    const hijriDue = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(due);
-    const gregDue = due.toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'});
+    const hijriDue = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'long',year:'numeric'}).format(due);
+    const gregDue = due.toLocaleDateString('ar-EG-u-nu-latn',{day:'numeric',month:'long',year:'numeric'});
     hawlHtml = days>0
       ? `حَوْلك يكمّل <b>${hijriDue}</b> (${gregDue}) — فاضل <b>${fmt(days)} يوم</b>. الزكاة المتوقعة بالسعر الحالي:`
       : `حَوْلك كمّل من ${Math.abs(days)} يوم (${hijriDue}). <b>الزكاة مستحقة دلوقتي:</b>`;
@@ -370,7 +370,7 @@ function renderZakat(pure, val){
     hawlHtml = 'مدخراتك بلغت النصاب ✅ حدّد تحت إمتى وصلت للنصاب عشان نحسب الحَوْل. بالسعر الحالي الزكاة هتكون:';
   }
   box.innerHTML = `<div class="zakat-box ok">${hawlHtml}<div class="zakat-big">${fmt(z)} جنيه</div>
-    <span class="hint">٢.٥٪ من ${fmt(val)} ج (قيمة ${fmt(pure,2)} جرام صافي بالسعر الحالي)</span></div>`;
+    <span class="hint">2.5٪ من ${fmt(val)} ج (قيمة ${fmt(pure,2)} جرام صافي بالسعر الحالي)</span></div>`;
 }
 
 function save(){ localStorage.setItem('dehbak.holdings', JSON.stringify(holdings)); renderHoldings(); }
@@ -402,7 +402,7 @@ $('manualToggle').onclick = ()=>{
 };
 $('manualBtn').onclick = ()=>{
   const g = parseFloat($('fManual').value);
-  if(!g || g<=0){ toast('اكتب سعر جرام عيار ٢٤'); return; }
+  if(!g || g<=0){ toast('اكتب سعر جرام عيار 24'); return; }
   price = { gram24Egp: g, usdEgp: price && price.usdEgp, ozUsd: null, updatedAt: new Date(), source: 'يدوي', manual: true };
   manualMode = true;
   localStorage.setItem('dehbak.price', JSON.stringify(price));
