@@ -57,6 +57,8 @@
   .cell .k{color:var(--ink2);font-size:11.5px;font-weight:700}
   .cell .v{font-size:16px;font-weight:800;color:var(--ink);margin-top:2px}
   .cell .v small{font-size:10.5px;color:var(--ink2);font-weight:600}
+  .cell .buyline{font-size:11px;color:var(--ink2);font-weight:700;margin-top:2px}
+  .hero-buy{color:var(--ink2);font-size:14px;font-weight:700;margin-top:6px}
   .priceline{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--ink2);font-size:11.5px;gap:8px}
   button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;font-weight:800}
   .btn-gold{background:linear-gradient(135deg,var(--btn-from),var(--btn-to));color:#241b05;padding:10px 18px;font-size:13.5px;
@@ -153,6 +155,7 @@
       <span class="unit" id="tPerGram"></span>
       <span class="chg up" id="chg" style="display:none"></span>
     </div>
+    <div class="hero-buy" id="heroBuy"></div>
     <div class="spark-wrap" id="sparkWrap">
       <div class="spark-cap" id="tSparkCap"></div>
       <svg id="spark" preserveAspectRatio="none" viewBox="0 0 300 52"></svg>
@@ -241,6 +244,9 @@ const STR = {
     sparkCap: 'حركة السعر في آخر تحديثات',
     karat: k => 'عيار ' + k,
     gineh: 'جنيه ذهب', ounce: 'الأوقية', egp: 'ج', gramWord: 'جرام', pureGram: 'جرام صافي',
+    srcSagha: 'آي صاغة — أسعار محلات الصاغة',
+    heroSell: b => 'لو هتبيع للصاغة دلوقتي: <b>' + b + ' ج</b> للجرام (عيار 21)',
+    youSell: 'تبيع بـ',
     loading: 'جاري تحميل السعر…', refreshing: 'بيحدّث…', noPrice: 'لسه مفيش سعر.',
     updatedLine: (t, src, fx) => 'آخر تحديث: ' + t + (src ? ' — المصدر ' + src : '') + (fx ? ' — الدولار ≈ ' + fx + ' ج' : ''),
     manualLine: t => 'آخر تحديث: ' + t + ' — سعر يدوي',
@@ -273,7 +279,7 @@ const STR = {
     zEGP: 'جنيه',
     hawlBtn: 'احسب الحَوْل',
     hawlNote: 'حدّد تاريخ وصول مدخراتك للنصاب عشان نحسبلك ميعاد الزكاة. الحساب استرشادي — للفتوى اسأل أهل العلم.',
-    footer: 'المصدر: سعر الأوقية العالمي × سعر صرف الدولار الرسمي، من أكتر من مصدر مجاني بالتناوب (xaus.com وgold-api.com)، تحديث كل دقيقة.<br>سعر الصاغة المحلي في المحلات بيزيد فرق بسيط (أجرة الصاغة)، والمصنعية مش محسوبة هنا.<br>نموذج تجريبي — النسخة النهائية هتبقى تطبيق على الموبايل بإشعارات للسعر والزكاة.',
+    footer: 'المصدر الأساسي: أسعار محلات الصاغة من آي صاغة (iSagha.com) — بيع وشراء، تحديث كل دقيقة. لو مش متاحة: السعر العالمي المحسوب (xaus.com وgold-api.com) كاحتياطي.<br>أسعار الصاغة بتختلف من محل لمحل بفروق بسيطة، والمصنعية مش محسوبة هنا.<br>نموذج تجريبي — النسخة النهائية هتبقى تطبيق على الموبايل بإشعارات للسعر والزكاة.',
     tEnterWeight: 'اكتب الوزن الأول', tSaved: 'اتسجلت ✅', tDeleted: 'اتمسحت',
     tExample: 'مثال جاهز — امسحه بعلامة 🗑 لما تسجل دهبك', tPickDate: 'اختار التاريخ',
     tHawlDone: 'اتحسب الحَوْل ✅', tEnterManual: 'اكتب سعر جرام عيار 24', tManualDone: 'اتعمل بالسعر اليدوي ✅',
@@ -289,6 +295,9 @@ const STR = {
     sparkCap: 'Price moves across recent updates',
     karat: k => k + 'K',
     gineh: 'Gold pound', ounce: 'Ounce', egp: 'EGP', gramWord: 'g', pureGram: 'g pure',
+    srcSagha: 'iSagha — local shop prices',
+    heroSell: b => 'Sell to shops now: <b>' + b + ' EGP</b>/g (21K)',
+    youSell: 'you sell',
     loading: 'Loading the price…', refreshing: 'Refreshing…', noPrice: 'No price yet.',
     updatedLine: (t, src, fx) => 'Updated: ' + t + (src ? ' — source ' + src : '') + (fx ? ' — USD ≈ ' + fx + ' EGP' : ''),
     manualLine: t => 'Updated: ' + t + ' — manual price',
@@ -321,7 +330,7 @@ const STR = {
     zEGP: 'EGP',
     hawlBtn: 'Calculate hawl',
     hawlNote: 'Pick the date your savings reached the nisab to get your zakat due date. This is an estimate — for a fatwa ask a scholar.',
-    footer: 'Source: global spot ounce × official USD/EGP rate, from rotating free providers (xaus.com and gold-api.com), refreshed every minute.<br>Local Egyptian shop prices run slightly higher (sagha premium); workmanship is not included.<br>Demo — the final version will be a mobile app with price and zakat alerts.',
+    footer: 'Primary source: local Egyptian shop prices from iSagha (iSagha.com) — sell and buy, refreshed every minute. Fallback when unavailable: computed international price (xaus.com and gold-api.com).<br>Shop prices vary slightly from store to store; workmanship is not included.<br>Demo — the final version will be a mobile app with price and zakat alerts.',
     tEnterWeight: 'Enter the weight first', tSaved: 'Saved ✅', tDeleted: 'Deleted',
     tExample: 'Example added — delete it with 🗑 when you record your own gold', tPickDate: 'Pick a date',
     tHawlDone: 'Hawl calculated ✅', tEnterManual: 'Enter the 24K gram price', tManualDone: 'Manual price applied ✅',
@@ -397,7 +406,37 @@ function fetchJSON(url, timeoutMs){
       .catch(e=>{ clearTimeout(timer); reject(e); });
   });
 }
+function fetchText(url, timeoutMs){
+  return new Promise((resolve, reject)=>{
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>{ ctrl.abort(); reject(new Error('timeout')); }, timeoutMs || FETCH_TIMEOUT);
+    fetch(url, {signal: ctrl.signal, cache: 'no-store'})
+      .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.text(); })
+      .then(j=>{ clearTimeout(timer); resolve(j); })
+      .catch(e=>{ clearTimeout(timer); reject(e); });
+  });
+}
+function parseSagha(html){
+  let t = html.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ');
+  t = t.replace(/<[^>]+>/g,'|').replace(/\s+/g,' ').replace(/ *\| */g,'|').replace(/\|+/g,'|');
+  const k = {};
+  const tre = /(\d+)K\|عيار \1\|[▲▼]\|شراء\|([\d.]+)\|ج\.م\|بيع\|([\d.]+)\|ج\.م/g;
+  let m; while((m = tre.exec(t))) k[m[1]] = { buy:+m[2], sell:+m[3] };
+  const ti = t.indexOf('العيار|بيع');
+  const tbl = ti >= 0 ? t.slice(ti) : t;
+  const row = label => { const r = tbl.match(new RegExp(label + '\\|([\\d.]+)\\|ج\\.م\\|[\\d.]+\\|ج\\.م\\|([\\d.]+)\\|ج\\.م')); return r ? { sell:+r[1], buy:+r[2] } : null; };
+  ['14','18','21','22','24'].forEach(x=>{ const v = row('عيار ' + x); if(v) k[x] = v; });
+  const gineh = row('جنيه ذهب');
+  const ozm = tbl.match(/أوقية الذهب\|([\d.]+)\|\$/);
+  if(!k['24'] || !k['22'] || !k['21'] || !k['18'] || !gineh) throw new Error('parse failed');
+  return { mode:'sagha', k, gineh, ozUsd: ozm ? +ozm[1] : null, source:'isagha' };
+}
+async function fetchSagha(){
+  const html = await fetchText('https://market.isagha.com/prices?_=' + Date.now(), 10000);
+  return parseSagha(html);
+}
 const SOURCES = [
+  { name: 'iSagha', get: fetchSagha },
   { name: 'xaus.com', get: async ()=>{
       const j = await fetchJSON('https://xaus.com/api/v1/spot?currency=EGP&unit=gram');
       if(!j.xau || !j.xau.price) throw new Error('bad data');
@@ -445,9 +484,9 @@ async function fetchPrice(){
   for(const s of SOURCES){
     try{
       const p = await s.get();
-      price = { ...p, updatedAt: new Date(), manual: false };
+      price = { mode: p.mode || 'intl', ...p, updatedAt: new Date(), manual: false };
       localStorage.setItem('dehbak.price', JSON.stringify(price));
-      pushHistory(price.gram24Egp);
+      pushHistory(karatSell('21'));
       setBadge('live', S.live);
       $('updated').dataset.state='';
       renderAll();
@@ -469,7 +508,21 @@ function loadCached(){
     renderAll(); }
 }
 
-function gramPrice(k){ return price.gram24Egp * (k==='gineh' ? (8*21/24) : (+k)/24); }
+function karatSell(k){
+  if(price.mode === 'sagha'){
+    if(k === 'gineh') return price.gineh.sell;
+    return price.k[k] ? price.k[k].sell : null;
+  }
+  return price.gram24Egp * (k==='gineh' ? (8*21/24) : (+k)/24);
+}
+function karatBuy(k){
+  if(price.mode === 'sagha'){
+    if(k === 'gineh') return price.gineh.buy;
+    return price.k[k] ? price.k[k].buy : null;
+  }
+  return null;
+}
+function gramPrice(k){ return karatSell(k); }
 function renderAll(){ renderPrices(); renderHoldings(); renderSpark(); }
 
 function fmtTime(d){ return d.toLocaleTimeString(lang==='ar' ? 'ar-EG-u-nu-latn' : 'en-GB', {hour:'2-digit',minute:'2-digit'}); }
@@ -478,16 +531,18 @@ function fmtHijri(d){ return new Intl.DateTimeFormat((lang==='ar'?'ar-SA':'en')+
 
 function renderPrices(){
   if(!price) return;
-  const g24=price.gram24Egp, g22=g24*22/24, g21=g24*21/24, g18=g24*18/24;
-  $('g24').innerHTML = fmt(g24)+' <small>'+S.egp+'</small>';
-  $('g22').innerHTML = fmt(g22)+' <small>'+S.egp+'</small>';
-  $('g21b').innerHTML = fmt(g21)+' <small>'+S.egp+'</small>';
-  $('g21').textContent = fmt(g21);
-  $('g18').innerHTML = fmt(g18)+' <small>'+S.egp+'</small>';
-  $('gineh').innerHTML = fmt(g21*8)+' <small>'+S.egp+'</small>';
+  const s21 = karatSell('21'), b21 = karatBuy('21');
+  $('g21').textContent = fmt(s21);
+  $('heroBuy').innerHTML = b21 ? S.heroSell(fmt(b21)) : '';
+  [['24','g24'],['22','g22'],['21','g21b'],['18','g18']].forEach(([k, id])=>{
+    const sell = karatSell(k), buy = karatBuy(k);
+    $(id).innerHTML = fmt(sell)+' <small>'+S.egp+'</small>' + (buy ? '<div class="buyline">'+S.youSell+' '+fmt(buy)+'</div>' : '');
+  });
+  const gs = karatSell('gineh'), gb = karatBuy('gineh');
+  $('gineh').innerHTML = fmt(gs)+' <small>'+S.egp+'</small>' + (gb ? '<div class="buyline">'+S.youSell+' '+fmt(gb)+'</div>' : '');
   $('oz').innerHTML = price.ozUsd ? fmt(price.ozUsd)+' <small>$</small>' : '—';
   if(prevGram24 && !price.manual){
-    const d = g24 - prevGram24, pct = d/prevGram24*100;
+    const d = s21 - prevGram24, pct = d/prevGram24*100;
     const el = $('chg');
     if(Math.abs(pct) < 0.005) { el.style.display='none'; }
     else {
@@ -496,10 +551,11 @@ function renderPrices(){
       el.textContent = (d>=0?'▲ ':'▼ ') + fmt(Math.abs(pct),2) + (lang==='ar'?'٪':'%');
     }
   }
-  prevGram24 = g24;
+  prevGram24 = s21;
+  const srcLabel = price.mode === 'sagha' ? S.srcSagha : price.source;
   $('updated').textContent = price.manual
     ? S.manualLine(fmtTime(price.updatedAt))
-    : S.updatedLine(fmtTime(price.updatedAt), price.source, price.usdEgp ? fmt(price.usdEgp,2) : null);
+    : S.updatedLine(fmtTime(price.updatedAt), srcLabel, price.usdEgp ? fmt(price.usdEgp,2) : null);
   $('updated').dataset.state='';
 }
 
@@ -579,9 +635,9 @@ function renderHoldings(){
 function renderZakat(pure, val){
   const box = $('zakatBox');
   if(!price){ box.innerHTML=''; return; }
-  const nisabValue = 85 * price.gram24Egp;
+  const nisabValue = 85 * karatSell('24');
   if(pure <= 0){
-    box.innerHTML = `<div class="zakat-box no">${S.zNisabInfo(fmt(nisabValue), fmt(price.gram24Egp))}</div>`;
+    box.innerHTML = `<div class="zakat-box no">${S.zNisabInfo(fmt(nisabValue), fmt(karatSell('24')))}</div>`;
     $('hawlRow').style.display='none'; return;
   }
   if(pure < 85){
