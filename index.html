@@ -180,12 +180,18 @@ async function fetchPrice(){
     const j = await r.json();
     price = { gram24Egp: j.xau.price, usdEgp: j.fx_rates.EGP, ozUsd: j.spot_usd_oz, updatedAt: new Date(j.updated_at || Date.now()) };
   }catch(e){
+   try{
     const r = await fetch('https://api.gold-api.com/price/XAU');
     const j = await r.json();
     const r2 = await fetch('https://open.er-api.com/v6/latest/USD');
     const j2 = await r2.json();
     const usdEgp = j2.rates.EGP;
     price = { gram24Egp: j.price/TROY*usdEgp, usdEgp, ozUsd: j.price, updatedAt: new Date() };
+   }catch(e2){
+    $('updated').textContent = 'مفيش نت — السعر متحدّثش. جرّب زرار التحديث.';
+    $('liveBadge').className='badge-stale'; $('liveBadge').textContent='غير متصل';
+    renderHoldingsSafe(); return;
+   }
   }
   localStorage.setItem('dehbak.price', JSON.stringify(price));
   renderAll();
@@ -200,6 +206,7 @@ function loadCached(){
 
 function gramPrice(k){ return price.gram24Egp * (k==='gineh' ? (8*21/24) : (+k)/24); }
 
+function renderAll(){ renderPrices(); renderHoldings(); }
 function renderPrices(){
   if(!price) return;
   const g24=price.gram24Egp, g22=g24*22/24, g21=g24*21/24, g18=g24*18/24;
@@ -221,15 +228,21 @@ function renderPrices(){
   $('updated').textContent = 'آخر تحديث: ' + t + ' — الدولار ≈ ' + fmt(price.usdEgp,2) + ' ج';
 }
 
+function renderHoldingsSafe(){
+  const box = $('holdings');
+  if(!holdings.length){ box.innerHTML = '<div class="empty">لسه مفيش مدخرات مسجلة.<br>أضف أول قطعة ذهب تملكها من الفورم فوق 👆</div>'; }
+  else { box.innerHTML = '<div class="empty">عندك '+holdings.length+' قطعة مسجلة — بنحمّل السعر عشان نحسب قيمتها…</div>'; }
+}
 function renderHoldings(){
+  if(!price){ renderHoldingsSafe(); return; }
   const box = $('holdings'); box.innerHTML='';
-  let totalVal=0, totalPure=0, totalCost=0, hasCost=false;
+  let totalVal=0, totalPure=0, totalCost=0, valWithCost=0, hasCost=false;
   holdings.forEach(h=>{
     const cur = h.grams * gramPrice(h.karat);
     const pure = h.grams * karatFactor(h.karat);
     totalVal += cur; totalPure += pure;
     let plHtml='';
-    if(h.buy){ const cost = h.grams*h.buy; totalCost += cost; hasCost = true;
+    if(h.buy){ const cost = h.grams*h.buy; totalCost += cost; valWithCost += cur; hasCost = true;
       const pl = cur-cost, p = pl/cost*100;
       plHtml = `<div class="pl ${pl>=0?'up':'down'}">${pl>=0?'+':'−'}${fmt(Math.abs(pl))} ج (${fmt(Math.abs(p),1)}٪)</div>`;
     }
@@ -248,7 +261,7 @@ function renderHoldings(){
     $('tValue').textContent = fmt(totalVal)+' ج';
     $('tPure').textContent = fmt(totalPure,2)+' جم';
     const plEl = $('tPL');
-    if(hasCost){ const pl = totalVal-totalCost;
+    if(hasCost){ const pl = valWithCost-totalCost;
       plEl.textContent = (pl>=0?'+':'−')+fmt(Math.abs(pl))+' ج';
       plEl.style.color = pl>=0? 'var(--green)':'var(--red)';
     } else { plEl.textContent='—'; plEl.style.color='var(--muted)'; }
@@ -315,6 +328,7 @@ $('hawlBtn').onclick = ()=>{
 $('refreshBtn').onclick = ()=>{ $('updated').textContent='بيحدّث…'; fetchPrice(); };
 
 if(hawlStart) $('fHawl').value = hawlStart;
+renderHoldingsSafe();
 loadCached();
 fetchPrice();
 setInterval(fetchPrice, 60000);
