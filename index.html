@@ -80,12 +80,15 @@
 
   /* holdings */
   .add-form select,.add-form input{padding:14px 14px;font-size:16.5px;border-radius:14px}
-  .add-form #fBuy{flex:1 1 100%}
+  .add-form input::placeholder{font-size:14px}
+  .add-form #fBuy,.add-form #fWk{flex:1 1 40%}
   .add-form .btn-gold{flex:1 1 100%;padding:15px;font-size:17px;border-radius:14px}
   .holding{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:16px 14px;margin-top:12px}
   .holding .info{flex:1}
   .holding .t{font-weight:800;font-size:17px}
   .holding .s{color:var(--ink2);font-size:13px;margin-top:2px}
+  .holding .s2{color:var(--ink);font-size:13px;font-weight:700;margin-top:2px}
+  .wknote{color:var(--ink2);font-size:12.5px;margin-top:12px;line-height:1.8;text-align:center}
   .holding .val{text-align:end}
   .holding .val .n{font-weight:800;font-size:18.5px}
   .holding .val .pl{font-size:14.5px;font-weight:800;margin-top:2px}
@@ -193,6 +196,7 @@
       </select>
       <input id="fGrams" type="number" inputmode="decimal" min="0" step="any">
       <input id="fBuy" type="number" inputmode="decimal" min="0" step="any">
+      <input id="fWk" type="number" inputmode="decimal" min="0" step="any">
       <button class="btn-gold" id="addBtn"></button>
     </div>
     <div id="holdings"></div>
@@ -201,6 +205,7 @@
       <div class="total"><div class="k" id="tTPure"></div><div class="v" id="tPure">—</div></div>
       <div class="total" id="tPLBox"><div class="k" id="tTPL"></div><div class="v" id="tPL">—</div></div>
     </div>
+    <div class="wknote" id="wkNote" style="display:none"></div>
     <div style="text-align:center;margin-top:10px"><button class="btn-ghost" id="demoBtn"></button></div>
   </section>
 
@@ -248,10 +253,14 @@ const STR = {
     manualPh: 'سعر جرام عيار 24 بالجنيه', apply: 'اعتمد',
     savings: '💰 مدخراتي من الذهب',
     savingsHint: 'سجّل اللي تملكه (جرامات أو جنيهات ذهب) وهيتحسب قيمته بالسعر الحالي مع كل تحديث. البيانات بتتحفظ على موبايلك بس.',
-    gramsPh: 'الجرامات / العدد', buyPh: 'سعر شراء الجرام (اختياري)', add: 'أضف', example: 'جرّب بمثال',
+    gramsPh: 'الجرامات / العدد', buyPh: 'سعر الشراء / جرام', wkPh: 'المصنعية / جرام', add: 'أضف', example: 'جرّب بمثال',
     empty: 'لسه مفيش مدخرات مسجلة.<br>أضف أول قطعة ذهب تملكها من الفورم فوق 👆',
     waiting: n => 'عندك ' + n + ' قطعة مسجلة — بنحمّل السعر عشان نحسب قيمتها…',
     boughtAt: p => 'اشتريت الجرام بـ ' + p + ' ج',
+    paidBreak: (b, w) => 'شراء ' + b + ' + مصنعية ' + w + ' للجرام',
+    wkOnly: w => 'مصنعية ' + w + ' للجرام',
+    paidTotal: t => 'المدفوع كله: ' + t + ' ج',
+    wkNote: 'ملحوظة: المصنعية عادةً مش بترجع عند إعادة البيع — فلو ظهرت خسارة عليها فده متوقع وطبيعي. والزكاة بتتحسب على قيمة الذهب بس من غير المصنعية.',
     tValue: 'القيمة دلوقتي', tPure: 'إجمالي الذهب الصافي', tPL: 'مكسبك / خسارتك',
     zakat: '🕌 الزكاة',
     zakatHint: 'نصاب الذهب 85 جرام صافي. لو مدخراتك بلغت النصاب وعدّى عليها سنة هجرية (354 يوم)، تجب زكاة 2.5٪.',
@@ -292,10 +301,14 @@ const STR = {
     manualPh: 'Price of 24K gram in EGP', apply: 'Apply',
     savings: '💰 My gold savings',
     savingsHint: 'Record what you own (grams or gold pounds) and its value updates with every price refresh. Data stays on your device only.',
-    gramsPh: 'Grams / count', buyPh: 'Buy price per gram (optional)', add: 'Add', example: 'Try an example',
+    gramsPh: 'Grams / count', buyPh: 'Buy price / g', wkPh: 'Workmanship / g', add: 'Add', example: 'Try an example',
     empty: 'No savings recorded yet.<br>Add your first piece of gold from the form above 👆',
     waiting: n => n + ' piece(s) saved — loading the price to value them…',
     boughtAt: p => 'Bought at ' + p + ' EGP/g',
+    paidBreak: (b, w) => 'Buy ' + b + ' + wk ' + w + ' per g',
+    wkOnly: w => 'Wk ' + w + ' per g',
+    paidTotal: t => 'Total paid: ' + t + ' EGP',
+    wkNote: 'Note: resale usually does not return the workmanship, so a loss on it is expected. Zakat is calculated on the gold value only, without workmanship.',
     tValue: 'Value now', tPure: 'Total pure gold', tPL: 'Profit / loss',
     zakat: '🕌 Zakat',
     zakatHint: 'The nisab is 85 g of pure gold. If your savings reach it and a lunar year (354 days) passes, 2.5% zakat is due.',
@@ -356,7 +369,8 @@ function applyLang(){
   $('manualToggle').textContent = S.manualLink;
   $('fManual').placeholder = S.manualPh; $('manualBtn').textContent = S.apply;
   $('tSavings').textContent = S.savings; $('tSavingsHint').textContent = S.savingsHint;
-  $('fGrams').placeholder = S.gramsPh; $('fBuy').placeholder = S.buyPh;
+  $('fGrams').placeholder = S.gramsPh; $('fBuy').placeholder = S.buyPh; $('fWk').placeholder = S.wkPh;
+  $('wkNote').textContent = S.wkNote;
   $('addBtn').textContent = S.add; $('demoBtn').textContent = S.example;
   $('tTValue').textContent = S.tValue; $('tTPure').textContent = S.tPure; $('tTPL').textContent = S.tPL;
   $('tZakat').textContent = S.zakat; $('tZakatHint').textContent = S.zakatHint;
@@ -522,15 +536,20 @@ function renderHoldings(){
     const cur = h.grams * gramPrice(h.karat);
     const pure = h.grams * karatFactor(h.karat);
     totalVal += cur; totalPure += pure;
-    let plHtml='';
-    if(h.buy){ const cost = h.grams*h.buy; totalCost += cost; valWithCost += cur; hasCost = true;
+    let plHtml='', subHtml='', paidHtml='';
+    const wk = h.wk || 0;
+    if(h.buy || wk > 0){
+      const cost = h.grams * ((h.buy || 0) + wk);
+      totalCost += cost; valWithCost += cur; hasCost = true;
       const pl = cur-cost, p = pl/cost*100;
       plHtml = `<div class="pl ${pl>=0?'up':'down'}">${pl>=0?'+':'−'}${fmt(Math.abs(pl))} ${S.egp} (${fmt(Math.abs(p),1)}${lang==='ar'?'٪':'%'})</div>`;
+      subHtml = h.buy && wk ? S.paidBreak(fmt(h.buy), fmt(wk)) : (h.buy ? S.boughtAt(fmt(h.buy)) : S.wkOnly(fmt(wk)));
+      paidHtml = `<div class="s2">${S.paidTotal(fmt(cost))}</div>`;
     }
     const row = document.createElement('div'); row.className='holding';
     row.innerHTML = `<div class="info">
         <div class="t">${fmt(h.grams, h.grams%1?2:0)} ${h.karat==='gineh'?'':S.gramWord+' '}${karatName(h.karat)}</div>
-        <div class="s">${h.buy? S.boughtAt(fmt(h.buy)):''}</div>
+        <div class="s">${subHtml}</div>${paidHtml}
       </div>
       <div class="val"><div class="n">${fmt(cur)} ${S.egp}</div>${plHtml}</div>
       <button class="del" data-id="${h.id}">🗑</button>`;
@@ -538,6 +557,7 @@ function renderHoldings(){
   });
   box.querySelectorAll('.del').forEach(b=>b.onclick=()=>{ holdings = holdings.filter(x=>x.id!=b.dataset.id); save(); toast(S.tDeleted); });
   if(holdings.length){
+    $('wkNote').style.display = holdings.some(h=>h.wk>0) ? 'block' : 'none';
     $('totalsBox').style.display='grid';
     $('tValue').textContent = fmt(totalVal)+' '+S.egp;
     $('tPure').textContent = fmt(totalPure,2)+' '+(lang==='ar'?'جم':'g');
@@ -549,6 +569,7 @@ function renderHoldings(){
       plBox.classList.add(pl>=0?'up':'down');
     } else { plEl.textContent='—'; plEl.style.color='var(--ink2)'; }
   } else {
+    $('wkNote').style.display='none';
     $('totalsBox').style.display='none';
     box.innerHTML = '<div class="empty">'+S.empty+'</div>';
   }
@@ -591,13 +612,14 @@ $('addBtn').onclick = ()=>{
   const karat = $('fKarat').value;
   const grams = parseFloat($('fGrams').value);
   const buy = parseFloat($('fBuy').value);
+  const wk = parseFloat($('fWk').value);
   if(!grams || grams<=0){ toast(S.tEnterWeight); return; }
-  holdings.push({id:Date.now(), karat, grams, buy: buy>0?buy:null});
-  $('fGrams').value=''; $('fBuy').value='';
+  holdings.push({id:Date.now(), karat, grams, buy: buy>0?buy:null, wk: wk>0?wk:null});
+  $('fGrams').value=''; $('fBuy').value=''; $('fWk').value='';
   save(); toast(S.tSaved);
 };
 $('demoBtn').onclick = ()=>{
-  holdings.push({id:Date.now(), karat:'21', grams:10, buy:5200});
+  holdings.push({id:Date.now(), karat:'21', grams:10, buy:5200, wk:300});
   holdings.push({id:Date.now()+1, karat:'gineh', grams:2, buy:null});
   save(); toast(S.tExample);
 };
